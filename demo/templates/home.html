@@ -1,0 +1,44 @@
+<html>
+    <head>
+        <script type="text/javascript">
+      (function() {
+        var script = window.document.createElement('script');
+        script.setAttribute('id', 'tml-agent');
+        script.setAttribute('type', 'application/javascript');
+        script.setAttribute('src', 'https://tools.translationexchange.com/agent/stable/agent.min.js');
+        script.setAttribute('charset', 'UTF-8');
+
+        script.onload = function() {
+           Trex.init('998ec7b63f1fb763f698fe0bd02d46f0e601af7e743ab5d46139560273704957', {"locale": "en", "cache": 86400, "enabled": true, "languages": [{"locale": "en", "flag_url": "https://s3-us-west-1.amazonaws.com/trex-snapshots/flags/default/languages/16/en.png", "english_name": "English", "native_name": "English"}, {"locale": "ru", "flag_url": "https://s3-us-west-1.amazonaws.com/trex-snapshots/flags/default/languages/16/ru.png", "english_name": "Russian", "native_name": "\u0420\u0443\u0441\u0441\u043a\u0438\u0439"}], "source": "foody", "host": "https://tools.translationexchange.com/agent/stable/agent.min.js", "type": "agent", "css": ".tml_translatable.tml_not_translated { border-bottom: 1px dotted red; } .tml_translatable.tml_translated { border-bottom: 1px dotted green; } .tml_translatable.tml_fallback { border-bottom: 1px dotted #e90; } .tml_translatable.tml_pending { border-bottom: 1px dotted #e90; } .tml_translatable.tml_locked { border-bottom: 1px dotted blue; } .tml_translatable.tml_language_case { padding:0px 2px; border: 1px dotted blue; border-radius: 2px; } .tml_translatable.tml_token { background: #eee; padding:0px 2px; border: 1px dotted #ccc; border-radius: 2px; color: black; }", "sdk": "tml-python v#0.2.11"});
+        };
+        window.document.getElementsByTagName('head')[0].appendChild(script);
+
+      })();
+    </script>
+    </head>
+    <body>
+    {% with messages=[{},{}] %}
+    <p>{% tr count=messages|length %}You have {count||message}{% endtr %}</p>
+    {% endwith %}
+    {% with messages=[{}] %}
+    <p>{% tr count=messages|length %}You have {count||message}{% endtr %}</p>
+    {% endwith %}
+    
+    <p>{% tr user=users.michael %}Hello {user}{% endtr %}</p>
+    <p>{% tr user=[users.michael, ':first_name'] %}Hello {user}{% endtr %}</p>
+    <p>{% tr user=[users.michael, 'Michaell'] %}Hello {user}{% endtr %}</p>
+    <p>{% tr user=users.michael %}Hello {user.first_name}{% endtr %}</p>
+    <p>{% tr user={'object': users.michael, 'attribute': 'first_name'} %}Hello {user}{% endtr %}</p>
+    <p>{% tr user={'object': users.michael, 'property': 'last_name'} %}Hello {user}{% endtr %}</p>
+    <p>{% tr user={'object': users.michael, 'value': 'Michael'} %}Hello {user}{% endtr %}</p>
+    <p>{% tr users=[users.values(), ':first_name'] %}Hello {users}{% endtr %}</p>
+    <p>{% tr users=[users.values(), '<b>{$0}</b>'] %}Hello { users}{% endtr %}</p>
+    <p>{% tr users=[users.values(), ':first_name', {'joiner': 'or'}] %}Hello { users}{% endtr %}</p>
+    <p>{% tr user=users.anna %}This is {user|he,she,it}{% endtr %}</p>
+    <p>{% tr user=users.michael %}This is {user|male: he, female: she, other: it}{% endtr %}</p>
+    </body>
+</html>
+
+
+
+
