@@ -1,0 +1,1 @@
+{% tr user=users.michael %}This is {user|male: he, female: she, other: it}{% endtr %}

@@ -1,0 +1,1 @@
+{% tr user=users.michael %}Hello {user}{% endtr %}

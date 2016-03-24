@@ -1,0 +1,1 @@
+{% tropts source="navigation/bar", target_locale="ru" %}{% tr name=user.name|trs, count=messages|length %}{name} has {count||message,messages}{% endtr %}{% endtropts %}

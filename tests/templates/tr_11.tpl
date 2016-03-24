@@ -1,0 +1,1 @@
+{% tr user=users.anna %}This is {user|he,she,it}{% endtr %}

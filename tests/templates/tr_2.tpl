@@ -1,0 +1,1 @@
+{% tr user=[users.michael, ':first_name'] %}Hello {user}{% endtr %}

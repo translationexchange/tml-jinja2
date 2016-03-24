@@ -1,0 +1,1 @@
+{% tr user={'object': users.michael, 'property': 'last_name'} %}Hello {user}{% endtr %}

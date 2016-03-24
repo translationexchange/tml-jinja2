@@ -132,7 +132,7 @@ class TMLExtension(Extension):
         kwargs =[]
         if 'description' in variables:
             kwargs = [
-            nodes.Keyword('description', variables.get('description', ''))]
+                nodes.Keyword('description', variables.get('description', ''))]
 
         return nodes.Output([nodes.Call(nodes.Name('translate_trs', 'load'), args, kwargs, None, None)]).set_lineno(lineno)
 
@@ -165,7 +165,7 @@ class TMLExtension(Extension):
                 item.call.args += allowed_assignments
         return node
 
-    def parse_tml_inline(self,parser,lineno):
+    def parse_tml_inline(self, parser, lineno):
         context = get_current_context()
         agent_config = dict((k, v) for k, v in six.iteritems(CONFIG.get('agent', {})))
         agent_host = agent_config.get('host', CONFIG.agent_host())
@@ -220,8 +220,8 @@ class TMLExtension(Extension):
             description = args[0]
             if argc > 1:
                 options = args[1]
-                if argc > 2:
-                    data = args[2]
+                # if argc > 2:
+                #     data = args[2]
         try:
             tr = self._fetch_tr()
             _, trans_value, _ = tr(
