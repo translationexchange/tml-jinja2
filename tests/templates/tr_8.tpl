@@ -1,1 +1,1 @@
-{% tr users=[users.values(), ':first_name'] %}Hello {users}{% endtr %}
+{% tr users=[users, ':first_name'] %}Hello {users}{% endtr %}

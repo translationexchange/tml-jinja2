@@ -11,6 +11,7 @@ def test_tr(fake_user, testenv):
         'anna': fake_user(**{'gender': 'female', 'first_name': 'Anna', 'last_name': 'Tusso'})
     }
     ctx = {'users': users}
+    ctx_2 = {'users': [users['michael'], users['anna']]}
     
     def tpl(str, ctx):
         return testenv.get_template(str + ".tpl").render(ctx)
@@ -23,9 +24,9 @@ def test_tr(fake_user, testenv):
     assert to_string('Hello Berkovitch') == tpl('tr_6', ctx)
     assert to_string('Hello Michael') == tpl('tr_7', ctx)
     # list tokens
-    assert to_string('Hello Michael and Anna') == tpl('tr_8', ctx)
-    assert to_string('Hello <b>Michael Berkovitch</b> and <b>Anna Tusso</b>') == tpl('tr_9', ctx)
-    assert to_string('Hello Michael or Anna') == tpl('tr_10', ctx)
+    assert to_string('Hello Michael and Anna') == tpl('tr_8', ctx_2)
+    assert to_string('Hello <b>Michael Berkovitch</b> and <b>Anna Tusso</b>') == tpl('tr_9', ctx_2)
+    assert to_string('Hello Michael or Anna') == tpl('tr_10', ctx_2)
     # transform tokens
     assert to_string('This is she') == tpl('tr_11', ctx)
     assert to_string('This is he') == tpl('tr_12', ctx)

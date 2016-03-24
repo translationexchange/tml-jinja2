@@ -1,1 +1,1 @@
-{% tr users=[users.values(), '<b>{$0}</b>'] %}Hello { users}{% endtr %}
+{% tr users=[users, '<b>{$0}</b>'] %}Hello { users}{% endtr %}
