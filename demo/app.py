@@ -79,7 +79,7 @@ env = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.join(path, 'templates')),
     autoescape=True,)
 env.add_extension('jinja2.ext.with_')
-env.add_extension('jinja2_tml.ext.TMLExtension')
+env.add_extension('tml_jinja2.ext.TMLExtension')
 env.install_tr_callables(tr=tr)
 
 if __name__ == '__main__':

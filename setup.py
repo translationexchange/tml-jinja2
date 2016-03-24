@@ -36,7 +36,7 @@ def get_version(*path):
             return version_match.group(2)
     raise RuntimeError('Unable to find version string.')
 
-version = get_version('jinja2_tml', '__init__.py')
+version = get_version('tml_jinja2', '__init__.py')
 here = abspath(dirname(__file__))
 
 # Get the long description from the relevant file
@@ -70,7 +70,7 @@ requirements = [
 ]
 
 setup(
-    name='jinja2-tml',
+    name='tml-jinja2',
 
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
@@ -117,7 +117,7 @@ setup(
     ],
 
     # What does your project relate to?
-    keywords='tml jinja2-tml translationexchange',
+    keywords='tml tml-jinja2 translationexchange',
 
     include_package_data = True,
     # You can just specify the packages manually here if your project is
