@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/translationexchange/tml-jinja2.png?branch=master)](https://travis-ci.org/translationexchange/tml-jinja2)
+[![Coverage Status](https://coveralls.io/repos/translationexchange/tml-jinja2/badge.png?branch=master)](https://coveralls.io/r/translationexchange/tml-jinja2?branch=master)
+
+
 The idea of this extension is to integrate web frameworks, that uses Jinja2 as template engine, with TML in easy and extendable fashion.
 
 
