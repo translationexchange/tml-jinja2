@@ -7,6 +7,7 @@ from time import mktime
 from jinja2 import nodes
 from jinja2.ext import Extension
 from jinja2.filters import do_mark_safe
+from jinja2.utils import contextfunction
 from tml import full_version
 from tml.config import CONFIG
 from tml.logger import get_logger
@@ -35,6 +36,7 @@ def dummy_tr(label, data=None, description=None, options=None):
 
 SYSTEM_TEMPLATES = {
     'inline': """
+    {% if data.caller == "middleware" or not data.force_injection %}
     <script>
       (function() {
         var script = window.document.createElement('script');
@@ -50,13 +52,15 @@ SYSTEM_TEMPLATES = {
 
       })();
     </script>
-"""
+    {% endif %}
+""",
+    'language_selector': '<div data-tml-language-selector="{{ type }}" {{ opts }}></div>'
 }
 
 
 class TMLExtension(Extension):
     # a set of names that trigger the extension.
-    tags = set(['trs', 'tr', 'tropts', 'tml_inline'])
+    tags = set(['trs', 'tr', 'tropts', 'tml_inline', 'tml_language_selector'])
 
     def __init__(self, environment):
         super(TMLExtension, self).__init__(environment)
@@ -166,6 +170,10 @@ class TMLExtension(Extension):
         return node
 
     def parse_tml_inline(self, parser, lineno):
+        caller="";
+        while parser.stream.current.type != 'block_end':
+            caller = parser.parse_expression().value
+
         context = get_current_context()
         agent_config = dict((k, v) for k, v in six.iteritems(CONFIG.get('agent', {})))
         agent_host = agent_config.get('host', CONFIG.agent_host())
@@ -187,10 +195,42 @@ class TMLExtension(Extension):
         data = {
             'agent_config': dumps(agent_config),
             'agent_host': agent_host,
-            'application_key': context.application.key}
+            'application_key': context.application.key,
+            'caller': caller,
+            'force_injection': agent_config.get('force_injection', False)
+        }
 
         output = self.environment.from_string(SYSTEM_TEMPLATES['inline']).render(data=data)
 
+        return nodes.Output([nodes.Const(do_mark_safe(output))]).set_lineno(lineno)
+
+    def parse_tml_language_selector(self, parser, lineno):
+        args = parser.parse_expression()
+        variables = {}
+
+        while parser.stream.current.type != 'block_end':
+            parser.stream.expect('comma')
+            name = parser.stream.expect('name')
+            if name.value in variables:
+                parser.fail('translatable variable %r defined twice.' %
+                            name.value, name.lineno,
+                            exc=TemplateAssertionError)
+            if parser.stream.current.type == 'assign':
+                next(parser.stream)
+                variables[name.value] = var = parser.parse_expression()
+            else:
+                variables[name.value] = var = nodes.Name(name.value, 'load')
+
+
+        data = {
+            'type': args.value
+        }
+        if 'opts' in variables:
+            data['opts'] = variables.get('opts', '').value
+        else:
+            data['opts'] = ""
+
+        output = self.environment.from_string(SYSTEM_TEMPLATES['language_selector']).render(type=data['type'], opts=data['opts'])
         return nodes.Output([nodes.Const(do_mark_safe(output))]).set_lineno(lineno)
 
     def _translate_trs(self, value, description=None, **kwargs):
@@ -215,7 +255,7 @@ class TMLExtension(Extension):
     def trs_filter(self, value, *args):
         argc = len(args)
         data, description, options = {}, '', {}
-        
+
         if argc > 0:
             description = args[0]
             if argc > 1:
