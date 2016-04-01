@@ -1,5 +1,6 @@
 tml-env
 .tox
+.coverage
 *.pyc
 *.pyc
 *.pyo
