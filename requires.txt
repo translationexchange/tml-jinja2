@@ -1,2 +1,2 @@
-tml[pylibmc]>=0.2.11
+tml[pylibmc]>=0.2.19
 Jinja2>=2.8
