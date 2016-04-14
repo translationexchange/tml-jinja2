@@ -54,13 +54,14 @@ SYSTEM_TEMPLATES = {
     </script>
     {% endif %}
 """,
-    'language_selector': '<div data-tml-language-selector="{{ type }}" {{ opts }}></div>'
+    'language_selector': '<div data-tml-language-selector="{{ type }}" {{ opts }}></div>',
+    'stylesheet_link': '<link href="{{ link }}" rel="stylesheet">'
 }
 
 
 class TMLExtension(Extension):
     # a set of names that trigger the extension.
-    tags = set(['trs', 'tr', 'tropts', 'tml_inline', 'tml_language_selector'])
+    tags = set(['trs', 'tr', 'tropts', 'tml_inline', 'tml_language_selector', 'tml_stylesheet_link'])
 
     def __init__(self, environment):
         super(TMLExtension, self).__init__(environment)
@@ -231,6 +232,23 @@ class TMLExtension(Extension):
             data['opts'] = ""
 
         output = self.environment.from_string(SYSTEM_TEMPLATES['language_selector']).render(type=data['type'], opts=data['opts'])
+        return nodes.Output([nodes.Const(do_mark_safe(output))]).set_lineno(lineno)
+
+    def parse_tml_stylesheet_link(self,parser,lineno):
+        ltr = parser.parse_expression()
+
+        while parser.stream.current.type != 'block_end':
+            parser.stream.expect('comma')
+            rtl = parser.parse_expression()
+
+        context = get_current_context()
+
+        link = ltr.value
+        if context.language.right_to_left:
+            link = rtl.value
+
+        output = self.environment.from_string(SYSTEM_TEMPLATES['stylesheet_link']).render(link=link)
+
         return nodes.Output([nodes.Const(do_mark_safe(output))]).set_lineno(lineno)
 
     def _translate_trs(self, value, description=None, **kwargs):
