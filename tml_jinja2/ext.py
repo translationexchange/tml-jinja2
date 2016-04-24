@@ -12,6 +12,7 @@ from tml import full_version
 from tml.config import CONFIG
 from tml.logger import get_logger
 from tml.session_vars import get_current_context
+from tml.tokenizers.dom import DomTokenizer
 
 
 __author__ = 'xepa4ep'
@@ -61,7 +62,7 @@ SYSTEM_TEMPLATES = {
 
 class TMLExtension(Extension):
     # a set of names that trigger the extension.
-    tags = set(['trs', 'tr', 'tropts', 'tml_inline', 'tml_language_selector', 'tml_stylesheet_link'])
+    tags = set(['trs', 'tr', 'tropts', 'tml_inline', 'tml_language_selector', 'tml_stylesheet_link', 'trh'])
 
     def __init__(self, environment):
         super(TMLExtension, self).__init__(environment)
@@ -140,6 +141,23 @@ class TMLExtension(Extension):
                 nodes.Keyword('description', variables.get('description', ''))]
 
         return nodes.Output([nodes.Call(nodes.Name('translate_trs', 'load'), args, kwargs, None, None)]).set_lineno(lineno)
+
+    def parse_trh(self, parser, lineno):
+        node = nodes.Scope(lineno=lineno)
+        assignments = []
+        while parser.stream.current.type != 'block_end':
+            lineno = parser.stream.current.lineno
+            if assignments:
+                parser.stream.expect('comma')
+            target = parser.parse_assign_target(name_only=True)
+            parser.stream.expect('assign')
+            expr = parser.parse_expression()
+            assignments.append(nodes.Keyword(target.name, expr, lineno=lineno))
+        body = parser.parse_statements(('name:endtrh',),
+                                         drop_needle=True)
+        return nodes.CallBlock(nodes.Call(
+            nodes.Name('translate_trh', 'load'), [], assignments, None, None),
+            [], [], body).set_lineno(lineno)
 
     def parse_tropts(self, parser, lineno):
         """
@@ -264,6 +282,14 @@ class TMLExtension(Extension):
         options.update(self._filter_options(kwargs))
         tr = self._fetch_tr()
         _, value, _err = tr(body, data=kwargs, description=description, options=options)
+        return do_mark_safe(value)
+
+    def _translate_trh(self, **kwargs):
+        body = kwargs.pop('caller',)()
+        options = kwargs.pop('options', {})
+        options.update(self._filter_options(kwargs))
+        tokenizer = DomTokenizer(kwargs, options)
+        value = tokenizer.translate(body)
         return do_mark_safe(value)
 
     def _filter_options(self, options):
