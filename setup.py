@@ -129,7 +129,7 @@ setup(
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
     install_requires=[
-        'tml[pylibmc]>=0.2.18',
+        'tml[pylibmc]>=0.3.1',
         'Jinja2>=2.8']
 
     # List additional groups of dependencies here (e.g. development
